@@ -1,3 +1,4 @@
 tflite_runtime
 sounddevice
 python-daemon
+numpy<2
