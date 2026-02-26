@@ -4,6 +4,11 @@ project(dtln_ladspa)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+# --- Hardware Optimization for Raspberry Pi Zero 2 W (Cortex-A53) ---
+# This forces GCC to schedule instructions perfectly for the A53 pipeline and cache
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -mcpu=cortex-a53 -mtune=cortex-a53")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mcpu=cortex-a53 -mtune=cortex-a53")
+
 # Find System FFTW3
 find_library(FFTW3F_LIB fftw3f REQUIRED)
 
