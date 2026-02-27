@@ -40,7 +40,7 @@ nano ~/.asoundrc
 
 pcm.dtln_mic {
     type ladspa
-    slave.pcm "hw:0,0"
+    slave.pcm "plughw:0,0"
     path "/usr/lib/ladspa"
     plugins [{
         label dtln_noise_suppression
@@ -48,5 +48,5 @@ pcm.dtln_mic {
     }]
 }
 
-arecord -Ddtln_mic -r16000 -fS16_LE -c1 test.wav
+arecord -Dplug:dtln_mic -r16000 -fS16_LE -c1 test.wav
 ```
