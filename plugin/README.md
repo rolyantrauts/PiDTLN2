@@ -51,7 +51,7 @@ pcm.dtln_mic {
     path "/usr/lib/ladspa"
     plugins [{
         label dtln_noise_suppression
-        id 39401
+        id 9999 # Change in dtln_plugin.cpp
     }]
 }
 
