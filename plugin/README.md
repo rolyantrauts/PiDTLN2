@@ -56,4 +56,15 @@ pcm.dtln_mic {
 }
 
 arecord -Dplug:dtln_mic -r16000 -fS16_LE -c1 test.wav
-```
+
+# GStreamer pipeline
+gst-launch-1.0 alsasrc ! \
+    audio/x-raw,rate=16000,channels=1,format=S16LE ! \
+    audioconvert ! \
+    ladspa-speech-agc-neon-wakeword-agc-neon \
+    Target-Level--Amplitude-=0.5 \
+    Attack-Time--ms-=0.1 \
+    Release-Time--ms-=1550.0 \
+    Hold-Time--ms-=400.0 ! \
+    audioconvert ! \
+    alsasink```
