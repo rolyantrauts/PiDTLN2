@@ -14,7 +14,14 @@ cd tensorflow/tensorflow/lite/build
 
 # 3. Configure and build the static library
 cmake ..
-cmake --build . 
+cmake --build .
+
+# Configure and optimize specifically for the Cortex-A53
+# cmake -DCMAKE_C_FLAGS="-O3 -mcpu=cortex-a53 -mtune=cortex-a53" \
+#       -DCMAKE_CXX_FLAGS="-O3 -mcpu=cortex-a53 -mtune=cortex-a53" \
+#       -DTFLITE_ENABLE_XNNPACK=ON \
+#       -DTFLITE_ENABLE_RUY=ON \
+#       ..
 
 cd ~
 mkdir -p PiDTLN2/plugin/build
