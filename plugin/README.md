@@ -25,7 +25,7 @@ cmake --build .
 
 cd ~
 mkdir -p PiDTLN2/plugin/build
-cd build
+cd PiDTLN2/plugin/build
 cmake ..
 make
 
