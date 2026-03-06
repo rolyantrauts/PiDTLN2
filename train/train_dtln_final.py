@@ -11,6 +11,9 @@ TFRECORD_VAL_DIR = "tfrecords_dataset/val"
 # Increased for 16-core Xeon with 64GB RAM
 BATCH_SIZE = 64  
 EPOCHS = 200
+
+# Zero-indexed. Setting to 44 starts training at Epoch 45/200
+INITIAL_EPOCH = 44  
 LEARNING_RATE = 1e-3
 MODEL_SAVE_DIR = "saved_models"
 
@@ -76,13 +79,26 @@ def snr_loss(y_true, y_pred):
     y_true = tf.squeeze(y_true)
     y_pred = tf.squeeze(y_pred)
     
-    # Prevent log(0) -> -inf explosion on pure clean identity samples
-    snr = (tf.reduce_mean(tf.math.square(y_true), axis=-1, keepdims=True) + 1e-7) / \
-          (tf.reduce_mean(tf.math.square(y_true - y_pred), axis=-1, keepdims=True) + 1e-7)
-          
-    num = tf.math.log(snr)
-    denom = tf.math.log(tf.constant(10.0, dtype=num.dtype))
-    loss = -10.0 * (num / denom)
+    epsilon = 1e-7
+    
+    # Calculate energy of true signal and noise
+    true_energy = tf.reduce_mean(tf.math.square(y_true), axis=-1, keepdims=True)
+    noise_energy = tf.reduce_mean(tf.math.square(y_true - y_pred), axis=-1, keepdims=True)
+    
+    # Ensure inputs to log are strictly positive and bounded
+    true_energy = tf.maximum(true_energy, epsilon)
+    noise_energy = tf.maximum(noise_energy, epsilon)
+    
+    # log(A/B) = log(A) - log(B) is more numerically stable than log(A / B)
+    # Using base 10 log: log10(x) = ln(x) / ln(10)
+    log_10 = tf.math.log(10.0)
+    
+    log_true = tf.math.log(true_energy) / log_10
+    log_noise = tf.math.log(noise_energy) / log_10
+    
+    # SNR = 10 * log10(True / Noise)
+    # We negate it because we want to MINIMIZE the loss (maximize SNR)
+    loss = -10.0 * (log_true - log_noise)
     
     return tf.reduce_mean(loss)
 
@@ -176,6 +192,14 @@ def main():
     optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=LEARNING_RATE, clipnorm=3.0)
     
     model.compile(optimizer=optimizer, loss=snr_loss)
+
+    # Load the healthy BEST validation weights
+    best_val_path = os.path.join(MODEL_SAVE_DIR, "dtln_best_val.keras")
+    if os.path.exists(best_val_path):
+        print(f"\n[INFO] Found healthy saved model at {best_val_path}. Loading weights to resume training...")
+        model.load_weights(best_val_path)
+    else:
+        print("\n[INFO] No previous checkpoint found. Starting training from scratch...")
     
     callbacks = [
         tf.keras.callbacks.ModelCheckpoint(
@@ -206,10 +230,11 @@ def main():
         tf.keras.callbacks.TensorBoard(log_dir="./logs")
     ]
     
-    print(f"\nStarting DTLN Training on Full Epochs...")
+    print(f"\nStarting DTLN Training...")
     model.fit(
         train_dataset,
         validation_data=val_dataset,
+        initial_epoch=INITIAL_EPOCH,  
         epochs=EPOCHS, 
         callbacks=callbacks
     )
