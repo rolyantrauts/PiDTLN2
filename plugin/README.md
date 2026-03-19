@@ -1,3 +1,14 @@
+# DTLN LadSpa plugin
+
+I noticed that after quantisation and splitting the model into x2 tflite you also split the hidden states of the LSTM layers that causes a slight mismatch on each chunk.
+So you have a choice of models the original https://github.com/rolyantrauts/PiDTLN2/blob/main/models/dtln_ns_quant_1.tflite
+Or from the modified export of the trained model https://github.com/rolyantrauts/PiDTLN2/blob/main/export_dynamic.py we expose those hidden states and pass as output/input parameters in use.
+Fixes a slight chunking click and improves the model.
+
+You might also want to make modification to the original great work by sanebow to use those states with the new dynamic export models https://github.com/rolyantrauts/PiDTLN2/blob/main/models/model_1_dynamic.tflite
+
+Or you can just run the Ladspa plugin via ALSA, Pipewire or Pulseaudio
+
 ```
 sudo apt-get update
 sudo apt-get install -y build-essential cmake git libfftw3-dev ladspa-sdk
