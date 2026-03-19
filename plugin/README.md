@@ -9,6 +9,7 @@ You might also want to make modification to the original great work by sanebow t
 
 Or you can just run the Ladspa plugin via ALSA, Pipewire or Pulseaudio as the Cortex-A53 optimised precompiled binary is here.
 [dtln_ladspa.so](https://github.com/rolyantrauts/PiDTLN2/blob/main/plugin/precompiled/arm64/cortex-a53/dtln_ladspa.so) where you can skip compile and just install.
+The default trained model was trained with much headroom and even though counter intuative best results are with inputs of 0.2-0.4 amplitude.
 ```
 # Install the plugin
 sudo cp dtln_ladspa.so /usr/lib/ladspa/
