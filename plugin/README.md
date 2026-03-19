@@ -8,7 +8,7 @@ Fixes a slight chunking click and improves the model.
 You might also want to make modification to the original great work by sanebow to use those states with the new dynamic export models https://github.com/rolyantrauts/PiDTLN2/blob/main/models/model_1_dynamic.tflite
 
 Or you can just run the Ladspa plugin via ALSA, Pipewire or Pulseaudio as the Cortex-A53 optimised precompiled binary is here.
-dtln_ladspa.so where you can skip compile and just install.
+[dtln_ladspa.so](https://github.com/rolyantrauts/PiDTLN2/blob/main/plugin/precompiled/arm64/cortex-a53/dtln_ladspa.so) where you can skip compile and just install.
 ```
 # Install the plugin
 sudo cp dtln_ladspa.so /usr/lib/ladspa/
